@@ -63,7 +63,8 @@ sub DownloadMasterFile
 	system ("$WGET_COMMAND $RELEASED_BINARY_FILE > /dev/null 2>\&1");
 	#print "$WGET_COMMAND $RELEASED_BINARY_FILE\n";
 	print "copying $MOBIUS_BIN to $MOBIUSFOLDER\n";
-	system ("mv $MOBIUS_BIN $MOBIUSFOLDER"); # ZZZ
+	system ("mv $MOBIUS_BIN $MOBIUSFOLDER");
+	system ("chmod a+rx $MOBIUSFOLDER/$MOBIUS_BIN");
 
 print "File Downloaded\n";
 }
