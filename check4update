@@ -57,6 +57,11 @@ sub GetMasterVersion
 	# print "Mtime is '$MASTERMD5'\n";
 }
 
+sub KillServer
+{
+        system("killall mobius-hotline-server");
+}
+
 sub DownloadMasterFile
 {
 	chdir ("/tmp");
@@ -96,6 +101,6 @@ if ($LOCALMD5 eq $MASTERMD5)
 }
 print "local ver = $LOCALMD5, master ver $MASTERMD5\n";
 DownloadMasterFile();
-
+KillServer();
 exit (0);
 
