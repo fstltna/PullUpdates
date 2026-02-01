@@ -2,31 +2,21 @@
 use strict;
 use warnings;
 use File::stat;
-use Time::localtime;
 
 my $SOURCE_VERSION = "/home/hotlineuser/mobius/mobius-hotline-server";
 my $RELEASED_VERSION = "/var/www/html/latestmobius.txt";
 my $VERSION = "1.0.0";
+my $MD5SUM = "/usr/bin/md5sum -b";
 
-print "markversion v$VERSION - Mark Latest time for mobius\n";
-print "===================================================\n";
+print "markversion v$VERSION - Set the MD5 key for the current version\n";
+print "================================================================\n";
 if (! -f $SOURCE_VERSION)
 {
 	print "Source file $SOURCE_VERSION does not exist\n";
 	exit (1);
 }
 
-open my $INPUT_FILE, "<$SOURCE_VERSION"  || die "Can't open $SOURCE_VERSION: $!\n";
-
-my @timearray = stat($INPUT_FILE);
-my $LOCALDATE = ctime(stat($INPUT_FILE)->mtime);
-
-print "Mtime is '$LOCALDATE'\n";
-close ($INPUT_FILE);
-
-
-open my $OUTPUT_FILE, ">$RELEASED_VERSION"  || die "Can't create $RELEASED_VERSION: $!\n";
-print ($OUTPUT_FILE "$LOCALDATE\n");
-close ($OUTPUT_FILE);
+#system("$MD5SUM $SOURCE_VERSION > $RELEASED_VERSION")  || die "Can't open $SOURCE_VERSION: $!\n";
+system("$MD5SUM $SOURCE_VERSION > $RELEASED_VERSION");
 
 exit (0);
