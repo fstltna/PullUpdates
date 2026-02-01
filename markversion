@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use File::stat;
+use Time::localtime;
+
+my $SOURCE_VERSION = "/home/hotlineuser/mobius/mobius-hotline-server";
+my $RELEASED_VERSION = "/var/www/html/latestmobius.txt";
+
+open my $INPUT_FILE, "<$SOURCE_VERSION"  || die "Can't open $SOURCE_VERSION: $!\n";
+
+my @timearray = stat($INPUT_FILE);
+my $LOCALDATE = ctime(stat($INPUT_FILE)->mtime);
+
+print "Mtime is '$LOCALDATE'\n";
+close ($INPUT_FILE);
+
+
+open my $OUTPUT_FILE, ">$RELEASED_VERSION"  || die "Can't create $RELEASED_VERSION: $!\n";
+print ($OUTPUT_FILE "$LOCALDATE\n");
+close ($OUTPUT_FILE);
+
+exit 0;
