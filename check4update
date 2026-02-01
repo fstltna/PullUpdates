@@ -3,7 +3,6 @@ use strict;
 use warnings;
 use File::stat;
 use Time::localtime;
-use Net::OpenSSH;
 
 # Constants
 my $VERSION = "1.0.0";
@@ -17,7 +16,7 @@ my $LOCALDATE = "";
 my $MASTER_FILE = "latestmobius.txt";
 my $RELEASED_VERSION_FILE = "https://hotline.retro-os.live/$MASTER_FILE";
 my $RELEASED_BINARY_FILE = "https://hotline.retro-os.live/$MOBIUS_BIN";
-my $WGET_COMMAND = "/usr/bin/wget";
+my $WGET_COMMAND = "/usr/bin/wget --timestamping";
 my $MASTERDATE = "";
 
 # Locals
@@ -28,7 +27,7 @@ sub GetLocalVersion
 
 	$LOCALDATE = ctime(stat($INPUT_FILE)->mtime);
 
-	print "Mtime is '$LOCALDATE'\n";
+	#print "Mtime is '$LOCALDATE'\n";
 	close ($INPUT_FILE);
 }
 
@@ -49,7 +48,7 @@ sub GetMasterVersion
 
         $MASTERDATE = ctime(stat($INPUT_FILE)->mtime);
 
-        print "Mtime is '$LOCALDATE'\n";
+	#print "Mtime is '$LOCALDATE'\n";
         close ($INPUT_FILE);
 }
 
@@ -57,9 +56,11 @@ sub DownloadMasterFile
 {
 	chdir ("/tmp");
 	system ("$WGET_COMMAND $RELEASED_BINARY_FILE > /dev/null 2>\&1");
+	#print "$WGET_COMMAND $RELEASED_BINARY_FILE\n";
+	print "copying $MOBIUS_BIN to $MOBIUSFOLDER\n";
 	system ("mv $MOBIUS_BIN $MOBIUSFOLDER"); # ZZZ
 
-print "In download\n";
+print "File Downloaded\n";
 }
 
 print "check4update v$VERSION\n";
@@ -87,24 +88,8 @@ if ($LOCALDATE eq $MASTERDATE)
 	print "Local version up to date\n";
 	exit (0);
 }
-
+print "local ver = $LOCALDATE, master ver $MASTERDATE\n";
 DownloadMasterFile();
-
-exit (0);
-
-# Open the host list
-open( my $fh => $HOSTLIST) || die "Cannot open $HOSTLIST: $!";
-
-# Loop for each line
-while(my $curline = <$fh>)
-{
-	chop($curline);
-	print "Working on server '$curline'\n";
-	my $ssh = Net::OpenSSH->new($curline, user => "hotlineuser", password => $USERPASS);
-	$ssh->error and die "Couldn't establish SSH connection: ". $ssh->error;
-	$ssh->scp_put("mobius-hotline-server", "/home/hotlineuser/mobius/mobius-hotline-server-update") or die "scp failed: " . $ssh->error;
-}
-close($fh);
 
 exit (0);
 
